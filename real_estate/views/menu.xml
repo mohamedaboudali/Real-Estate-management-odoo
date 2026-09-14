@@ -18,4 +18,11 @@
               parent="menu_real_estate_root"
               action="action_tenant"
               sequence="20"/>
+
+    <!-- Leases Menu -->
+    <menuitem id="menu_lease"
+              name="Leases"
+              parent="menu_real_estate_root"
+              action="action_lease"
+              sequence="20"/>
 </odoo>

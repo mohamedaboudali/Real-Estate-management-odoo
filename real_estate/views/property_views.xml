@@ -120,6 +120,12 @@
                 <separator/>
                 <filter string="available" name="available" domain="[('available', '=', True)]"/>
                 <filter string="not available" name="not available" domain="[('available', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'property_type'}"/>
+                    <filter string="Availability" name="group_by_availability" context="{'group_by': 'available'}"/>
+                </group>
+
             </search>
         </field>
     </record>

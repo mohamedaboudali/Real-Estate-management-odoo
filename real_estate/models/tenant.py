@@ -17,6 +17,12 @@ class Tenant(models.Model):
     active = fields.Boolean(string='Active', default=True) 
     crm_id = fields.Many2one('crm.lead', string='CRM Lead')
 
+    age_category = fields.Selection([
+                ('a', '1:20'),
+                ('b', '21:40'),
+                ('c', '41:60'),
+            ], string='Age Category')
+
     def update_notes(self):
         """Update the notes of the tenant"""
         for record in self:

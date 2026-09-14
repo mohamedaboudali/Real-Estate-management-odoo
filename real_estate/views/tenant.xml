@@ -40,6 +40,7 @@
                             <field name="city"/>
                             <field name="date_joined"/>
                             <field name="date_of_birth"/>
+                            <field name="age_category"/>
                             <field name="active"/>
                         </group>
                     </group>
@@ -104,9 +105,16 @@
                 <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
+                <field name="age_category"/>
                 <separator/>
                 <filter string="Active" name="active" domain="[('active', '=', True)]"/>
                 <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                 <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'age_category'}"/>
+                    
+                </group>
+
             </search>
         </field>
     </record>

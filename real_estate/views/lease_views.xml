@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Lease List View (Tree) -->
+    <record id="view_lease_tree" model="ir.ui.view">
+        <field name="name">real_estate.lease.tree</field>
+        <field name="model">real_estate.lease</field>
+        <field name="arch" type="xml">
+            <tree string="leases">
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="monthly_rent"/>
+                <field name="deposit_paid"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+    <!-- lease Action (Links views together) -->
+    <record id="action_lease" model="ir.actions.act_window">
+        <field name="name">leases</field>
+        <field name="res_model">real_estate.lease</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first lease
+            </p>
+        </field>
+    </record>
+
+    <!-- lease Form View -->
+    <record id="view_lease_form" model="ir.ui.view">
+        <field name="name">real_estate.lease.form</field>
+        <field name="model">real_estate.lease</field>
+        <field name="arch" type="xml">
+            <form string="Lease">
+                <header>
+                <field name="state" widget="statusbar" />
+                 <button name="set_state_to_active" string="active" type="object" invisible="state == 'active'" class="oe_highlight"/>
+                 <button name="set_state_to_draft" string="draft" type="object" invisible="state == 'Draft'" class="oe_highlight" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Lease Name"/>
+                        </h1>
+                    </div>
+                    <group string="Lease Details">
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                        <group>
+                            <field name="monthly_rent"/>
+                            <field name="deposit_paid"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+     <!-- Tenant Search View -->
+    <record id="view_lease_search" model="ir.ui.view">
+        <field name="name">real_estate.lease.search</field>
+        <field name="model">real_estate.lease</field>
+        <field name="arch" type="xml">
+            <search string="Search Leases">
+                <field name="name"/>
+                <field name="state"/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
+ 

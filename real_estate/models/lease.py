@@ -8,14 +8,12 @@ class Lease(models.Model):
     property_id = fields.Many2one(
         'real_estate.property',
         string='Property',
-        required=True,
         ondelete='cascade',  # If property deleted, delete lease too
         index=True
     )
     tenant_id = fields.Many2one(
         'real_estate.tenant',
         string='Tenant',
-        required=True,
         ondelete='cascade',
         index=True
     )
@@ -23,3 +21,21 @@ class Lease(models.Model):
     end_date = fields.Date(string='End Date', required=True)
     monthly_rent = fields.Float(string='Monthly Rent', required=True)
     deposit_paid = fields.Float(string='Deposit Paid')
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('active', 'Active'),
+        ('at_risk', 'At Risk'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled'),
+    ], string='Status', default='draft', required=True)
+
+    def set_state_to_active(self):
+            for record in self:
+                record.write({'state':'active'})
+
+    def set_state_to_draft(self):
+         for record in self:
+              record.write({'state': 'draft'})
+
+    
