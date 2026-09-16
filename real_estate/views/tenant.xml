@@ -21,7 +21,7 @@
             <form string="Tenant">
             <header>
                     <button name="update_notes" string="Update Notes" type="object" class="oe_highlight"/>
-                    <button name="get_crm_lead_email" string="Get Lead Email" type="object" class="oe_highlight"/>
+                    <button name="get_crm_lead_email" string="Get Lead Email" type="object" class="oe_highlight" groups="real_estate.group_tenant_manager"/>
             </header>
                 <sheet>
                     <div class="oe_title">
@@ -35,6 +35,7 @@
                             <field name="email"/>
                             <field name="phone"/>
                             <field name="crm_id"/>
+                            <field name="user_id"/>
                         </group>
                         <group>
                             <field name="city"/>

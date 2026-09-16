@@ -16,6 +16,7 @@ class Tenant(models.Model):
     notes = fields.Text(string='Notes')
     active = fields.Boolean(string='Active', default=True) 
     crm_id = fields.Many2one('crm.lead', string='CRM Lead')
+    user_id = fields.Many2one('res.users', string='Related User', index=True)
 
     age_category = fields.Selection([
                 ('a', '1:20'),

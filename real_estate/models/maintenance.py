@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 
 class MaintenanceRequest(models.Model):
-    _name = 'maintenance.request'
+    _name = 'real_estate.maintenance'
     _description = 'Property Maintenance Request'
     
     name = fields.Char()

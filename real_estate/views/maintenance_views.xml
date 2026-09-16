@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Maintenance List View (Tree) -->
+    <record id="view_maintenance_tree" model="ir.ui.view">
+        <field name="name">real_estate.maintenance.tree</field>
+        <field name="model">real_estate.maintenance</field>
+        <field name="arch" type="xml">
+            <tree string="Maintenances">
+                <field name="assigned_to"/>
+                <field name="scheduled_date"/>
+                <field name="completion_date"/>
+                <field name="actual_cost"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+    <!-- maintenance Action (Links views together) -->
+    <record id="action_maintenance" model="ir.actions.act_window">
+        <field name="name">maintenances</field>
+        <field name="res_model">real_estate.maintenance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first maintenance
+            </p>
+        </field>
+    </record>
+
+    <!-- maintenance Form View -->
+    <record id="view_maintenance_form" model="ir.ui.view">
+        <field name="name">real_estate.maintenance.form</field>
+        <field name="model">real_estate.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Maintenance Name"/>
+                        </h1>
+                    </div>
+                    <group string="Maintenance Details">
+                        <group>
+                            <field name="scheduled_date"/>
+                            <field name="completion_date"/>
+                        </group>
+                        <group>
+                            <field name="actual_cost"/>
+                            <field name="assigned_to"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
+ 

@@ -6,10 +6,12 @@
         <field name="model">real_estate.lease</field>
         <field name="arch" type="xml">
             <tree string="leases">
+                <field name="name"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
                 <field name="monthly_rent"/>
                 <field name="deposit_paid"/>
+                <field name="user_id"/>
             </tree>
         </field>
     </record>
@@ -53,6 +55,7 @@
                         <group>
                             <field name="monthly_rent"/>
                             <field name="deposit_paid"/>
+                            <field name="user_id"/>
                         </group>
                     </group>
                 </sheet>

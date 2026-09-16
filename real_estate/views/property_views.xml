@@ -5,13 +5,15 @@
         <field name="name">real_estate.property.tree</field>
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
-            <tree string="Properties">
+            <tree string="Properties" decoration-info="property_type == 'apartment'" decoration-warning="property_type == 'villa'">
                 <field name="name"/>
                 <field name="price"/>
                 <field name="bedrooms"/>
                 <field name="description"/>
+                <field name="agent_id"/>
                 <field name="create_date"/>
                 <field name="create_uid"/>
+                <field name="property_type"/>
             </tree>
         </field>
     </record>
@@ -23,7 +25,8 @@
         <field name="arch" type="xml">
             <form string="Property">
                 <header>
-                    <button name="mark_as_occupied" string="Mark as Occupied" type="object" invisible="not available" class="oe_highlight"/>
+                    <button name="mark_as_occupied" string="Mark as Occupied" type="object" invisible="not available" class="oe_highlight" groups="real_estate.group_property_manager"
+/>
                     <button name="mark_as_available" string="Mark as Available" type="object" invisible="available" class="oe_highlight"/>
                     <field name="available" invisible="1"/> 
                     <button name="update_description" string="Update Description" type="object" class="oe_highlight"/>
