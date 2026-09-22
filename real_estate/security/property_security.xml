@@ -24,6 +24,14 @@
         <field name="name">Lease User</field>
     </record>
 
+    <record id="group_maintenance_manager" model="res.groups">
+        <field name="name">maintenance Manager</field>
+    </record>
+
+    <record id="group_maintenance_user" model="res.groups">
+        <field name="name">maintenance User</field>
+    </record>
+
     <record id="property_agent_rule" model="ir.rule">
         <field name="name">Agent: Own Properties Only</field>
         <field name="model_id" ref="model_real_estate_property"/>
@@ -62,17 +70,24 @@
     </record>
 
 
-    <record id="lease_user_rule" model="ir.rule">
-        <field name="name">Lease: Own Lease Only</field>
-        <field name="model_id" ref="model_real_estate_lease"/>
-        <field name="domain_force">[('user_id', '=', user.id)]</field> 
-        <field name="groups" eval="[(4, ref('group_lease_user'))]"/>
-    </record>
-
-    <record id="lease_manager_rule" model="ir.rule">
+    <record id="lease_manager" model="ir.rule">
         <field name="name">Manager: All Leases</field>
         <field name="model_id" ref="model_real_estate_lease"/>
         <field name="domain_force">[]</field>
         <field name="groups" eval="[(4, ref('group_lease_manager'))]"/>
+    </record>
+
+    <record id="maintenance_user_rule" model="ir.rule">
+        <field name="name">maintenance: Own maintenance Only</field>
+        <field name="model_id" ref="model_real_estate_maintenance"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field> 
+        <field name="groups" eval="[(4, ref('group_maintenance_user'))]"/>
+    </record>   
+
+    <record id="maintenance_manager" model="ir.rule">
+        <field name="name">Manager: All maintenance</field>
+        <field name="model_id" ref="model_real_estate_maintenance"/>
+        <field name="domain_force">[]</field>
+        <field name="groups" eval="[(4, ref('group_maintenance_manager'))]"/>
     </record>
 </odoo>

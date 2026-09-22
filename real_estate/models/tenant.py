@@ -17,6 +17,11 @@ class Tenant(models.Model):
     active = fields.Boolean(string='Active', default=True) 
     crm_id = fields.Many2one('crm.lead', string='CRM Lead')
     user_id = fields.Many2one('res.users', string='Related User', index=True)
+    age = fields.Integer(string='age', compute='_compute_age', store=True)
+
+    lease_ids = fields.One2many('real_estate.lease', 'tenant_id', string='Leases') 
+
+    
 
     age_category = fields.Selection([
                 ('a', '1:20'),
@@ -35,6 +40,17 @@ class Tenant(models.Model):
                 record.write({'notes': record.crm_id.email_from})
             else:
                 record.write({'notes': record.crm_id.website})
+
+    @api.depends('date_of_birth')
+    def _compute_age(self):
+        """Calculate tenant age"""
+        today = fields.Date.today()
+        for record in self:
+            dob = fields.Date.from_string(record.date_of_birth)
+            if record.date_of_birth:
+                    record.age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            else:
+                    record.age = 0
                 
                     
         

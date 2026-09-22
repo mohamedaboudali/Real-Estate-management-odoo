@@ -11,7 +11,12 @@ class Property(models.Model):
     bedrooms = fields.Integer(string='Bedrooms', required=True)
     available = fields.Boolean(string='Available', default=True, index=True)   
     agent_id = fields.Many2one('res.users', string='Agent')
+    lease_ids = fields.One2many('real_estate.lease', 'property_id', string='Leases') 
+    lease_count = fields.Integer(string='Leases',compute='_compute_lease_count')
 
+    
+
+    
     property_type = fields.Selection([
             ('apartment', 'Apartment'),
             ('house', 'House'),
@@ -20,6 +25,25 @@ class Property(models.Model):
         ], string='Property Type', required=True)
 
     deposit = fields.Float(string='Deposit')
+
+    @api.depends('lease_ids')
+    def _compute_lease_count(self):
+        for record in self:
+            record.lease_count = len(record.lease_ids)
+
+    def action_view_leases(self):
+            self.ensure_one()
+
+            return {
+            'type': 'ir.actions.act_window',
+            'name': 'Leases',
+            'res_model': 'real_estate.lease',
+            'view_mode': 'list,form',
+            'domain': [('property_id', '=', self.id)],
+            'context': {
+                'default_property_id': self.id,
+            },
+        }
 
     def mark_as_occupied(self):
         """Mark property as no longer available"""

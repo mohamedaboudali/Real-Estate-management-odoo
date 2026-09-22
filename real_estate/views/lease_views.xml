@@ -37,11 +37,28 @@
         <field name="arch" type="xml">
             <form string="Lease">
                 <header>
+                <field name="state" invisible="1"/>
                 <field name="state" widget="statusbar" />
                  <button name="set_state_to_active" string="active" type="object" invisible="state == 'active'" class="oe_highlight"/>
                  <button name="set_state_to_draft" string="draft" type="object" invisible="state == 'Draft'" class="oe_highlight" />
+                 <button name="action_create_maintenance" string="submit request" type="object" class="oe_highlight"/>
                 </header>
                 <sheet>
+                <div class="oe_button_box" name="button_box">
+
+    <button name="action_view_maintenance"
+            type="object"
+            class="oe_stat_button"
+            icon="fa-wrench">
+
+        <field name="maintenance_count"
+               widget="statinfo"
+               string="Maintenance"/>
+
+    </button>
+
+</div>
+
                     <div class="oe_title">
                         <h1>
                             <field name="name" placeholder="Lease Name"/>
@@ -51,13 +68,38 @@
                         <group>
                             <field name="start_date"/>
                             <field name="end_date"/>
+                            <field name="property_id"/>
+                            <field name="tenant_id"/>
                         </group>
                         <group>
                             <field name="monthly_rent"/>
                             <field name="deposit_paid"/>
                             <field name="user_id"/>
+                            <field name="duration_months"/>
+                            <field name="next_service"/>
+                            <!--<field name="total_cost"/>-->
                         </group>
+                        <group string="Maintenance Requests">
+                            <field name="plumbing_count"/>
+                            <field name="electrical_count"/>
+                            <field name="air_condition_count"/>
+                            <field name="appliance_count"/>
+                            <field name="other_count"/>
+                        </group>    
+                        
                     </group>
+                    <notebook>
+                        <page string="Maintenance">
+                            <field name="maintenance_ids">
+                                <tree create="false">
+                                    <field name="name"/>
+                                    <field name="tenant_id"/>
+                                    <field name="property_id"/>
+                                    <field name="tenant_phone"/>
+                                </tree>
+                            </field>                                
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

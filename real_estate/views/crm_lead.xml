@@ -17,6 +17,7 @@
             </xpath>
             <header>
                 <button name="update_description" type="object" string="Update Description" class="btn-primary"/>
+                <button name="%(real_estate.create_tenant_wizard_action)d" type="action" string="Create Tenant" class="btn-primary"/>
             </header> 
         </field>
     </record>

@@ -1,5 +1,6 @@
 from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from dateutil.relativedelta import relativedelta
 
 class Lease(models.Model):
     _name = 'real_estate.lease'
@@ -23,6 +24,41 @@ class Lease(models.Model):
     monthly_rent = fields.Float(string='Monthly Rent', required=True)
     deposit_paid = fields.Float(string='Deposit Paid')
     user_id = fields.Many2one('res.users', string='Created By', index=True)
+    maintenance_count = fields.Integer(string='Maintenance', compute='_compute_maintenance_count')
+
+    duration_months = fields.Integer(string='Duration (Months)', compute='_compute_duration', store=True)
+    is_active = fields.Boolean(string='Currently Active', compute='_compute_is_active')
+
+    next_service = fields.Date(string='Next Service' ,onchange="_onchange_next_service")
+
+    maintenance_ids = fields.One2many('real_estate.maintenance', 'lease_id', string='Maintenance') 
+    #total_cost = fields.Float(compute='_compute_total_cost', string='Total Cost')
+    plumbing_count = fields.Integer(string='Plumbing', compute='_compute_maintenance_by_type')
+    electrical_count = fields.Integer(string='Electrical', compute='_compute_maintenance_by_type')
+    air_condition_count = fields.Integer(string='Air Condition', compute='_compute_maintenance_by_type')
+    appliance_count = fields.Integer(string='Appliance', compute='_compute_maintenance_by_type')
+    other_count = fields.Integer(string='Other', compute='_compute_maintenance_by_type')
+
+    @api.depends('maintenance_ids.issue_type')
+    def _compute_maintenance_by_type(self):
+        for record in self:
+           types_count = {
+                'plumbing': 0,
+                'electrical': 0,
+                'air_condition': 0,
+                'appliance': 0,
+                'other': 0,
+        }
+        for maintenance in record.maintenance_ids:
+            if maintenance.issue_type in types_count:
+                types_count[maintenance.issue_type] += 1
+
+        record.plumbing_count = types_count['plumbing']
+        record.electrical_count = types_count['electrical']
+        record.air_condition_count = types_count['air_condition']
+        record.appliance_count = types_count['appliance']
+        record.other_count = types_count['other']
+
 
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -31,6 +67,47 @@ class Lease(models.Model):
         ('expired', 'Expired'),
         ('cancelled', 'Cancelled'),
     ], string='Status', default='draft', required=True)
+
+    @api.depends('start_date', 'end_date')
+    def _compute_duration(self):
+        """Calculate lease duration in months"""
+        for record in self:
+            if record.start_date and record.end_date:
+                delta = record.end_date - record.start_date
+                record.duration_months = int(delta.days / 30)
+            else:
+                record.duration_months = 0
+
+    @api.depends('start_date', 'end_date', 'state')
+    def _compute_is_active(self):
+        """Check if lease is currently active"""
+        today = fields.Date.today()
+        for record in self:
+            if record.state == 'active' and record.start_date and record.end_date:
+                record.is_active = record.start_date <= today <= record.end_date
+            else:
+                record.is_active = False
+
+    @api.depends('maintenance_ids')
+    def _compute_maintenance_count(self):
+      for record in self:
+        record.maintenance_count = len(record.maintenance_ids)
+
+    def action_view_maintenance(self):
+     self.ensure_one()
+
+     return {
+        'type': 'ir.actions.act_window',
+        'name': 'Maintenance Requests',
+        'res_model': 'real_estate.maintenance',
+        'view_mode': 'tree,form',
+        'domain': [('lease_id', '=', self.id)],
+        'context': {
+            'default_lease_id': self.id,
+        },
+    }
+
+
 
     def set_state_to_active(self):
             if not self.env.user.has_group('real_estate.group_tenant_manager'):
@@ -64,6 +141,65 @@ class Lease(models.Model):
         if not self.env.user.has_group('real_estate.group_property_manager'):
             raise UserError("Only property managers can delete this record.")
 
+    @api.onchange('property_id')
+    def _onchange_property_id(self):
+            """Set default price when property is selected and validate availability"""
+            if self.property_id and not self.property_id.available:
+                raise UserError("The selected property is not available.")
+            if self.property_id and self.property_id.price:
+                self.monthly_rent = self.property_id.price
+                self.deposit_paid = self.monthly_rent.price * 0.10
+
+    @api.onchange('start_date')
+    def _onchange_next_service_date(self):
+            if self.start_date:
+                self.next_service = (
+                    self.start_date + relativedelta(month=1)
+                )
+                    
+            else:
+                self.next_service_date = False
+
+    def action_create_maintenance(self):
+            
+        self.ensure_one()
+
+        maintenance = self.env['real_estate.maintenance'].sudo().create({
+            'issue_type': 'electrical',
+            'description': 'new service',
+            'scheduled_date': self.next_service,
+            'lease_id': self.id,
+        })
+    
+        return {
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'real_estate.maintenance',
+                    'res_id': maintenance.id,
+                    'views': [(False, 'form')],
+                    'target': 'current',
+                }
+
+
+    #@api.depends('maintenance_ids.actual_cost')
+    #def _compute_total_cost(self):
+        #for lease in self:
+            # 1
+            #lease.total_cost = sum(maintenance.actual_cost for maintenance in lease.maintenance_ids)
+
+            # 2
+            # lease.total_cost = 0
+            # total_cost = 0
+            # for maintenance in lease.maintenance_ids:
+            #     if maintenance.actual_cost:
+            #         total_cost += maintenance.actual_cost
+            # lease.total_cost = total_cost   
+
+            # 3
+            #lease_maintenance_ids = self.env['maintenance.request'].search([('lease_id', '=', lease.id)])  
+            #lease.total_cost = 0
+            #for maintenance in lease_maintenance_ids:
+            #    if maintenance.actual_cost:
+            #        lease.total_cost += maintenance.actual_cost
 
     # def write(self, vals):
     #      if not self.env.user.has_group('real_estate.group_tenant_manager'):
