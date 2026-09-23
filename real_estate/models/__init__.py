@@ -6,3 +6,4 @@ from . import tenant
 from . import lease
 from . import maintenance
 from . import crm_lead
+from . import payment

@@ -31,4 +31,13 @@ class MaintenanceRequest(models.Model):
     completion_date = fields.Date()
     actual_cost = fields.Float()
 
+    #def _cron_auto_make_emergency_tomorrow(self):
+        #"""Scheduled action - set maintenance requests to emergency if preferred date is tomorrow"""
+        #tomorrow = fields.Date.today() + timedelta(days=1)
+        #maintenance_requests = self.search([
+            #('preferred_date', '=', tomorrow),
+            #('state', '!=', 'emergency')
+        #])
+        #for request in maintenance_requests:
+            #request.write({'state': 'emergency'})
     

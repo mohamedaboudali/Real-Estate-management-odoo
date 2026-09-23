@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+<!-- lease Action (Links views together) -->
+    <record id="action_lease" model="ir.actions.act_window">
+        <field name="name">leases</field>
+        <field name="res_model">real_estate.lease</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first lease
+            </p>
+        </field>
+    </record>
+
     <!-- Lease List View (Tree) -->
     <record id="view_lease_tree" model="ir.ui.view">
         <field name="name">real_estate.lease.tree</field>
@@ -11,23 +24,21 @@
                 <field name="end_date"/>
                 <field name="monthly_rent"/>
                 <field name="deposit_paid"/>
-                <field name="user_id"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
-
-
-
-    <!-- lease Action (Links views together) -->
-    <record id="action_lease" model="ir.actions.act_window">
-        <field name="name">leases</field>
-        <field name="res_model">real_estate.lease</field>
-        <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create your first lease
-            </p>
-        </field>
+    
+    <record id="ir_cron_auto_expire_leases" model="ir.cron">
+        <field name="name">Real Estate: Auto Expire Leases</field>
+        <field name="model_id" ref="model_real_estate_lease"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_expire_leases()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
     </record>
 
     <!-- lease Form View -->
@@ -45,20 +56,15 @@
                 </header>
                 <sheet>
                 <div class="oe_button_box" name="button_box">
-
-    <button name="action_view_maintenance"
-            type="object"
-            class="oe_stat_button"
-            icon="fa-wrench">
-
-        <field name="maintenance_count"
-               widget="statinfo"
-               string="Maintenance"/>
-
-    </button>
-
-</div>
-
+                  <button name="action_view_maintenance"
+                   type="object"
+                   class="oe_stat_button"
+                   icon="fa-wrench">
+                  <field name="maintenance_count"
+                   widget="statinfo"
+                   string="Maintenance"/>
+                  </button>
+                </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" placeholder="Lease Name"/>
@@ -97,7 +103,18 @@
                                     <field name="property_id"/>
                                     <field name="tenant_phone"/>
                                 </tree>
-                            </field>                                
+                            </field>
+                            </page>
+                            <page string="Payment Information">
+                            <group>
+                                <group string="Payment Methods Breakdown">
+                                    <field name="total_cash_amount" readonly="1"/>
+                                    <field name="total_visa_amount" readonly="1"/>
+                                </group>
+                                <group string="Total Payments Summary">
+                                    <field name="total_payment_amount" readonly="1" class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>                                
                         </page>
                     </notebook>
                 </sheet>

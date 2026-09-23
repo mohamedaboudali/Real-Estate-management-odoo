@@ -13,10 +13,7 @@ class Property(models.Model):
     agent_id = fields.Many2one('res.users', string='Agent')
     lease_ids = fields.One2many('real_estate.lease', 'property_id', string='Leases') 
     lease_count = fields.Integer(string='Leases',compute='_compute_lease_count')
-
-    
-
-    
+    deposit = fields.Float(string='Deposit')
     property_type = fields.Selection([
             ('apartment', 'Apartment'),
             ('house', 'House'),
@@ -24,7 +21,7 @@ class Property(models.Model):
             ('commercial', 'Commercial'),
         ], string='Property Type', required=True)
 
-    deposit = fields.Float(string='Deposit')
+    
 
     @api.depends('lease_ids')
     def _compute_lease_count(self):

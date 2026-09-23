@@ -1,8 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_property_manager,property.manager,model_real_estate_property,,1,1,1,1
-access_tenant_manager,tenant.manager,model_real_estate_tenant,real_estate.group_tenant_manager,1,1,0,0
+access_tenant_manager,tenant.manager,model_real_estate_tenant,real_estate.group_tenant_manager,1,1,1,1
 access_tenant_user,tenant.user,model_real_estate_tenant,real_estate.group_tenant,1,1,0,0
 access_lease_manager,lease.manager,model_real_estate_lease,,1,1,1,1
 access_maintenance_manager,maintenance.manager,model_real_estate_maintenance,,1,1,1,1
 access_maintenance_request_wizard,maintenance.request.wizard,model_lease_request_wizard,,1,1,1,1
 access_tenant_request_wizard,tenant_request_wizard,model_tenant_request_wizard,,1,1,1,1
+access_payment_manager,payment.manager,model_real_estate_payment,,1,1,1,1

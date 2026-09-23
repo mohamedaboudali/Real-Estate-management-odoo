@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- maintenance Action (Links views together) -->
+    <record id="action_maintenance" model="ir.actions.act_window">
+        <field name="name">maintenances</field>
+        <field name="res_model">real_estate.maintenance</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <!-- Maintenance List View (Tree) -->
     <record id="view_maintenance_tree" model="ir.ui.view">
         <field name="name">real_estate.maintenance.tree</field>
@@ -16,15 +23,6 @@
                 <field name="actual_cost"/>
             </tree>
         </field>
-    </record>
-
-
-
-    <!-- maintenance Action (Links views together) -->
-    <record id="action_maintenance" model="ir.actions.act_window">
-        <field name="name">maintenances</field>
-        <field name="res_model">real_estate.maintenance</field>
-        <field name="view_mode">tree,form</field>
     </record>
 
     <!-- maintenance Form View -->

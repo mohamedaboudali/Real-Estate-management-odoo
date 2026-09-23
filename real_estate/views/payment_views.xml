@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- payment Action (Links views together) -->
+    <record id="action_payment" model="ir.actions.act_window">
+        <field name="name">payments</field>
+        <field name="res_model">real_estate.payment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first payment
+            </p>
+        </field>
+    </record>
+
+    <!-- payment List View (Tree) -->
+    <record id="view_payment_tree" model="ir.ui.view">
+        <field name="name">real_estate.payment.tree</field>
+        <field name="model">real_estate.payment</field>
+        <field name="arch" type="xml">
+            <tree string="payments">
+                <field name="name"/>
+                <field name="lease_id"/>
+                <field name="tenant_id"/>
+                <field name="property_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+        <record id="ir_cron_auto_make_state_paid" model="ir.cron">
+        <field name="name">Real Estate: Auto Make Payments Paid</field>
+        <field name="model_id" ref="model_real_estate_payment"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_make_state_paid()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- payment Form View -->
+    <record id="view_payment_form" model="ir.ui.view">
+        <field name="name">real_estate.payment.form</field>
+        <field name="model">real_estate.payment</field>
+        <field name="arch" type="xml">
+            <form string="Payment">
+                <header>
+                <field name="state" invisible="1"/>
+                <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Payment"/>
+                        </h1>
+                    </div>
+                    <group string="Payment Details">
+                        <group>
+                            <field name="name"/>
+                            <field name="lease_id"/>
+                            <field name="tenant_id"/>
+                            <field name="property_id"/>
+                        </group>
+                        <group>
+                            <field name="due_date"/>
+                            <field name="amount"/>
+                            <field name="late_fee"/>
+                            <field name="payment_date"/>
+                            <!--<field name="payment_method"/>-->
+                            <!--<field name="total_cost"/>-->
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="notes">
+                            <field name="notes" placeholder="add notes here"/>                         
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
+ 

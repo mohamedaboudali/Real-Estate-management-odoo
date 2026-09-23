@@ -1,3 +1,5 @@
+import string
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 from dateutil.relativedelta import relativedelta
@@ -7,30 +9,16 @@ class Lease(models.Model):
     _description = 'Property Lease Agreement'
     
     name = fields.Char(string='Lease Reference', required=True, readonly=True, default='New')
-    property_id = fields.Many2one(
-        'real_estate.property',
-        string='Property',
-        ondelete='cascade',  # If property deleted, delete lease too
-        index=True
-    )
-    tenant_id = fields.Many2one(
-        'real_estate.tenant',
-        string='Tenant',
-        ondelete='cascade',
-        index=True
-    )
     start_date = fields.Date(string='Start Date', required=True)
     end_date = fields.Date(string='End Date', required=True)
     monthly_rent = fields.Float(string='Monthly Rent', required=True)
     deposit_paid = fields.Float(string='Deposit Paid')
     user_id = fields.Many2one('res.users', string='Created By', index=True)
     maintenance_count = fields.Integer(string='Maintenance', compute='_compute_maintenance_count')
-
     duration_months = fields.Integer(string='Duration (Months)', compute='_compute_duration', store=True)
     is_active = fields.Boolean(string='Currently Active', compute='_compute_is_active')
-
     next_service = fields.Date(string='Next Service' ,onchange="_onchange_next_service")
-
+    payment_ids = fields.One2many('real_estate.payment', 'lease_id', string='Payments')
     maintenance_ids = fields.One2many('real_estate.maintenance', 'lease_id', string='Maintenance') 
     #total_cost = fields.Float(compute='_compute_total_cost', string='Total Cost')
     plumbing_count = fields.Integer(string='Plumbing', compute='_compute_maintenance_by_type')
@@ -38,6 +26,33 @@ class Lease(models.Model):
     air_condition_count = fields.Integer(string='Air Condition', compute='_compute_maintenance_by_type')
     appliance_count = fields.Integer(string='Appliance', compute='_compute_maintenance_by_type')
     other_count = fields.Integer(string='Other', compute='_compute_maintenance_by_type')
+
+    total_cash_amount = fields.Float(
+        string= 'Total Cash Amount', compute='_compute_payment_information', store=True)
+    total_visa_amount = fields.Float(
+        string= 'Total Visa Amount', compute='_compute_payment_information', store=True)
+    total_payment_amount = fields.Float(
+        string= 'Total Payment Amount', compute='_compute_payment_information', store=True)
+
+    property_id = fields.Many2one(
+        'real_estate.property',
+        string='Property',
+        ondelete='cascade',  # If property deleted, delete lease too
+        index=True)
+    
+    tenant_id = fields.Many2one(
+        'real_estate.tenant',
+        string='Tenant',
+        ondelete='cascade',
+        index=True)
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('active', 'Active'),
+        ('at_risk', 'At Risk'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled'),
+    ], string='Status', default='draft', required=True)
 
     @api.depends('maintenance_ids.issue_type')
     def _compute_maintenance_by_type(self):
@@ -58,15 +73,6 @@ class Lease(models.Model):
         record.air_condition_count = types_count['air_condition']
         record.appliance_count = types_count['appliance']
         record.other_count = types_count['other']
-
-
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('active', 'Active'),
-        ('at_risk', 'At Risk'),
-        ('expired', 'Expired'),
-        ('cancelled', 'Cancelled'),
-    ], string='Status', default='draft', required=True)
 
     @api.depends('start_date', 'end_date')
     def _compute_duration(self):
@@ -107,7 +113,14 @@ class Lease(models.Model):
         },
     }
 
-
+    def _cron_auto_expire_leases(self):
+        """Scheduled action - expire leases whose end date has passed"""
+        today = fields.Date.today()
+        expired_leases = self.search([
+            ('end_date', '<', today),
+        ])
+        for lease in expired_leases:
+            lease.write({'state': 'expired'})
 
     def set_state_to_active(self):
             if not self.env.user.has_group('real_estate.group_tenant_manager'):
@@ -158,7 +171,7 @@ class Lease(models.Model):
                 )
                     
             else:
-                self.next_service_date = False
+                self.next_service = False
 
     def action_create_maintenance(self):
             
@@ -179,7 +192,39 @@ class Lease(models.Model):
                     'target': 'current',
                 }
 
+    @api.depends('payment_ids.amount', 'payment_ids.payment_method', 'payment_ids.state')
+    def _compute_payment_information(self):
+        for record in self:
+            costs = {
+                type_name: sum(
+                    record.payment_ids.filtered(
+                        lambda payment: payment.payment_method == type_name
+                    ).mapped('amount')
+                )
+                for type_name in ['cash', 'check', 'bank transfer', 'credit card', 'other']
+            }
 
+            record.total_cash_amount = costs['cash']
+            record.total_visa_amount = costs['check']
+            record.total_payment_amount = costs['bank transfer']
+            record.total_payment_amount += costs['credit card']
+            record.total_payment_amount += costs['other']
+
+    @api.constrains('start_date', 'end_date')
+    def _check_dates(self):
+        """Ensure end date is after start date"""
+        for record in self:
+            if record.start_date and record.end_date:
+                if record.end_date <= record.start_date:
+                    raise ValidationError("End date must be after start date")
+
+    @api.constrains('monthly_rent', 'deposit_paid')
+    def _check_rent_and_deposit(self):
+        """ensure deposit is not greater than monthly rent"""
+        for record in self:
+            if record.deposit_paid > record.monthly_rent:
+                raise ValidationError("Deposit cannot be greater than monthly rent")
+                
     #@api.depends('maintenance_ids.actual_cost')
     #def _compute_total_cost(self):
         #for lease in self:

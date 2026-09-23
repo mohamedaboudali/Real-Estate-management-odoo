@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
+    <!-- Property Action (Links views together) -->
+    <record id="action_property" model="ir.actions.act_window">
+        <field name="name">Properties</field>
+        <field name="res_model">real_estate.property</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first property
+            </p>
+        </field>
+    </record>
     
     <!-- Property List View (Tree) -->
     <record id="view_property_tree" model="ir.ui.view">
@@ -40,20 +50,10 @@
                 </header>
                 <sheet>
                 <div class="oe_button_box" name="button_box">
-
-    <button name="action_view_leases"
-            type="object"
-            class="oe_stat_button"
-            icon="fa-file-text-o">
-
-        <field name="lease_count"
-               widget="statinfo"
-               string="Leases"/>
-
-    </button>
-
-</div>
-
+                 <button name="action_view_leases" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                  <field name="lease_count" widget="statinfo" string="Leases"/>
+                 </button>
+                </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" placeholder="Property Name"/>
@@ -95,18 +95,6 @@
                     </notebook>
                 </sheet>
             </form>
-        </field>
-    </record>
-
-    <!-- Property Action (Links views together) -->
-    <record id="action_property" model="ir.actions.act_window">
-        <field name="name">Properties</field>
-        <field name="res_model">real_estate.property</field>
-        <field name="view_mode">tree,form,kanban</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create your first property
-            </p>
         </field>
     </record>
 
@@ -156,7 +144,6 @@
                     <filter string="Type" name="group_by_type" context="{'group_by': 'property_type'}"/>
                     <filter string="Availability" name="group_by_availability" context="{'group_by': 'available'}"/>
                 </group>
-
             </search>
         </field>
     </record>

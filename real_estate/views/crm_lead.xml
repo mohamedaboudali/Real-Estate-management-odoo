@@ -22,4 +22,17 @@
         </field>
     </record>
 
+  <record id="ir_cron_auto_create_tenant" model="ir.cron">
+        <field name="name">Real Estate: Auto Create Tenant</field>
+        <field name="model_id" ref="model_crm_lead"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_create_tenant_from_crm()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.now() + relativedelta(hour=2, minute=0, second=0, days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+    </record>
+
 </odoo>

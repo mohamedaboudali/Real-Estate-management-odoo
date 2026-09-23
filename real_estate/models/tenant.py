@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class Tenant(models.Model):
     _name = 'real_estate.tenant'
@@ -18,16 +19,8 @@ class Tenant(models.Model):
     crm_id = fields.Many2one('crm.lead', string='CRM Lead')
     user_id = fields.Many2one('res.users', string='Related User', index=True)
     age = fields.Integer(string='age', compute='_compute_age', store=True)
-
     lease_ids = fields.One2many('real_estate.lease', 'tenant_id', string='Leases') 
-
-    
-
-    age_category = fields.Selection([
-                ('a', '1:20'),
-                ('b', '21:40'),
-                ('c', '41:60'),
-            ], string='Age Category')
+    age_category = fields.Selection([('a', '1:20'),('b', '21:40'),('c', '41:60'),], string='Age Category')
 
     def update_notes(self):
         """Update the notes of the tenant"""
@@ -51,7 +44,18 @@ class Tenant(models.Model):
                     record.age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
             else:
                     record.age = 0
-                
+
+    @api.constrains('date_of_birth')
+    def _check_date_of_birth(self):                 
+        """Ensure date of birth is not in the future"""
+        today = fields.Date.today()
+        for record in self:
+            if record.date_of_birth and record.date_of_birth > today:
+                raise ValidationError("Date of Birth cannot be in the future.")
+
+    _sql_constraints = [
+        ('email_unique', 'UNIQUE(email)', 'Email must be unique! This email is already registered.'),
+    ]
                     
         
     

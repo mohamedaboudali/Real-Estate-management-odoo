@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Tenant Action (Links views together) -->
+    <record id="action_tenant" model="ir.actions.act_window">
+        <field name="name">Tenants</field>
+        <field name="res_model">real_estate.tenant</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first tenant
+            </p>
+        </field>
+    </record>
+
     <!-- Tenant List View (Tree) -->
     <record id="view_tenant_tree" model="ir.ui.view">
         <field name="name">real_estate.tenant.tree</field>
@@ -63,18 +75,6 @@
                     </notebook>
                 </sheet>
             </form>
-        </field>
-    </record>
-
-    <!-- Tenant Action (Links views together) -->
-    <record id="action_tenant" model="ir.actions.act_window">
-        <field name="name">Tenants</field>
-        <field name="res_model">real_estate.tenant</field>
-        <field name="view_mode">tree,form,kanban</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create your first tenant
-            </p>
         </field>
     </record>
 
