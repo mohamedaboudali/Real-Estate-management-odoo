@@ -37,6 +37,8 @@ Long description of module's purpose
         'views/payment_views.xml',
         'views/maintenance_views.xml',
         'views/crm_lead.xml',
+        'views/portal_templates.xml',
+        'views/portal_templates_maintenance.xml',
         'views/menu.xml',
     ],
     # only loaded in demonstration mode

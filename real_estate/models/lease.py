@@ -154,14 +154,14 @@ class Lease(models.Model):
         if not self.env.user.has_group('real_estate.group_property_manager'):
             raise UserError("Only property managers can delete this record.")
 
-    @api.onchange('property_id')
-    def _onchange_property_id(self):
-            """Set default price when property is selected and validate availability"""
-            if self.property_id and not self.property_id.available:
-                raise UserError("The selected property is not available.")
-            if self.property_id and self.property_id.price:
-                self.monthly_rent = self.property_id.price
-                self.deposit_paid = self.monthly_rent.price * 0.10
+    # @api.onchange('property_id')
+    # def _onchange_property_id(self):
+    #         """Set default price when property is selected and validate availability"""
+    #         if self.property_id and not self.property_id.available:
+    #             raise UserError("The selected property is not available.")
+    #         if self.property_id and self.property_id.price:
+    #             self.monthly_rent = self.property_id.price
+    #             self.deposit_paid = self.monthly_rent.price * 0.10
 
     @api.onchange('start_date')
     def _onchange_next_service_date(self):
