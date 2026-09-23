@@ -26,36 +26,36 @@
                 </div>
                 <t t-if="maintenance">
                     <div class="row">
-                        <t t-foreach="maintenance" t-as="request">
+                        <t t-foreach="maintenance" t-as="maintenance_req">
                             <div class="col-md-6 mb16">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <h5 class="card-title mb-2">
-                                            <t t-esc="request.property_id.name or request.name"/>
+                                            <t t-esc="maintenance_req.property_id.name or maintenance_req.name"/>
                                         </h5>
                                         <p class="text-muted mb-2">
-                                            <strong>maintenance:</strong> <t t-esc="request.name"/>
+                                            <strong>maintenance:</strong> <t t-esc="maintenance_req.name"/>
                                         </p>
-                                        <!-- <p class="mb-1">
-                                            <strong>Property Type:</strong>
-                                            <t t-esc="request.property_id.property_type or 'N/A'"/>
-                                        </p> -->
-                                        <!-- <p class="mb-1">
-                                            <strong>Monthly Rent:</strong>
-                                            <t t-esc="request.property_id.monthly_rent"/>
-                                        </p> -->
-                                        <!-- <p class="mb-1">
-                                            <strong>Status:</strong>
-                                            <t t-esc="request.state"/>
-                                        </p> -->
-                                        <!-- <p class="mb-1">
-                                            <strong>Start:</strong>
-                                            <t t-esc="request.start_date or '—'"/>
-                                        </p> -->
-                                        <!-- <p class="mb-1">
-                                            <strong>End:</strong>
-                                            <t t-esc="request.end_date or '—'"/>
-                                        </p> -->
+                                        <p class="mb-1">
+                                            <strong>Issue Type:</strong>
+                                            <t t-esc="maintenance_req.issue_type or 'N/A'"/>
+                                        </p> 
+                                        <p class="mb-1">
+                                            <strong>Tenant Phone:</strong>
+                                            <t t-esc="maintenance_req.tenant_phone"/>
+                                        </p> 
+                                        <p class="mb-1">
+                                            <strong>urgency:</strong>
+                                            <t t-esc="maintenance_req.urgency"/>
+                                        </p> 
+                                        <p class="mb-1">
+                                            <strong>Scheduled Date:</strong>
+                                            <t t-esc="maintenance_req.scheduled_date or '—'"/>
+                                        </p> 
+                                        <p class="mb-1">
+                                            <strong>Actual Cost:</strong>
+                                            <t t-esc="maintenance_req.actual_cost or '—'"/>
+                                        </p> 
                                     </div>
                                 </div>
                             </div>

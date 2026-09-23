@@ -2,3 +2,4 @@
 
 from . import controllers
 from . import controllers_maintenance
+from . import controllers_payment

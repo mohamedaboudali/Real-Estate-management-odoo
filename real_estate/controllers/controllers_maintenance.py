@@ -8,12 +8,12 @@ class RealEstatePortal(CustomerPortal):
     def _prepare_portal_layout_values(self):
         values = super(RealEstatePortal, self)._prepare_portal_layout_values()
         maintenance = request.env['real_estate.maintenance'].sudo().search([
-            ('user_id', '=', request.env.user.id)
+            ('assigned_to', '=', request.env.user.id)
         ], limit=1)
         maintenance_count = 0
         if maintenance:
             maintenance_count = request.env['real_estate.maintenance'].sudo().search_count([
-                ('user_id', '=', request.env.user.id)
+                ('assigned_to', '=', request.env.user.id)
             ])
         values.update({
             'maintenance_count': maintenance_count,
@@ -31,7 +31,7 @@ class RealEstatePortal(CustomerPortal):
             return request.render('real_estate.portal_my_maintenance', values)
 
         maintenance_records = request.env['real_estate.maintenance'].sudo().search([
-            ('user_id', '=', request.env.user.id)
+            ('assigned_to', '=', request.env.user.id)
         ], order='create_date desc')
         values.update({
             'maintenance': maintenance_records,
