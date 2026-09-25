@@ -56,11 +56,11 @@
                                             <t t-esc="payment.state or '—'"/>
                                         </p>
                                         <t t-if="payment.property_id">
-                                            <p class="mt-2">
-                                                <a t-att-href="'/property/%d/%s' % (payment.property_id.id, payment.property_id.name and payment.property_id.name.replace(' ', '-').lower() or '')" class="btn btn-sm btn-secondary">
-                                                    View Property Details
-                                                </a>
-                                            </p>
+                                          <p class="mt-2">
+                                            <a t-att-href="'/payment/%d' % payment.id" class="btn btn-sm btn-secondary">
+                                             View Payment Details
+                                            </a>
+                                          </p>
                                         </t>
                                     </div>
                                 </div>
@@ -77,6 +77,32 @@
                         </div>
                     </div>
                 </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_payment_details" name="Payment Details">
+        <t t-call="portal.portal_layout">
+            <div class="container mt16 o_portal_portlets">
+                <nav class="breadcrumb" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/my/home">My Account</a></li>
+                        <li class="breadcrumb-item"><a href="/my/payment">My Payments</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <t t-esc="payment.name"/>
+                        </li>
+                    </ol>
+                </nav>
+                <h1 class="mb16"><t t-esc="payment.name"/></h1>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Property:</strong> <t t-esc="payment.property_id.name or 'N/A'"/></p>
+                        <p><strong>Due Date:</strong> <t t-esc="payment.due_date"/></p>
+                        <p><strong>Amount:</strong> <t t-esc="payment.amount"/></p>
+                        <p><strong>Late Fees:</strong> <t t-esc="payment.late_fee or '—'"/></p>
+                        <p><strong>State:</strong> <t t-esc="payment.state or '—'"/></p>
+                    </div>
+                </div>
             </div>
         </t>
     </template>

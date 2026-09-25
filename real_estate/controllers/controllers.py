@@ -38,3 +38,16 @@ class RealEstatePortal(CustomerPortal):
             'leases': leases,
         })
         return request.render('real_estate.portal_my_leases', values)
+
+    @http.route(['/lease/<int:lease_id>'], type='http', auth='user', website=True)
+    def view_lease_details(self, lease_id, **kw):
+        lease_rec = request.env['real_estate.lease'].sudo().browse(lease_id)
+        if not lease_rec.exists() or lease_rec.tenant_id.user_id != request.env.user:
+            return request.redirect('/my/leases')
+
+        values = self._prepare_portal_layout_values()
+        values.update({
+        'lease': lease_rec,})
+        return request.render('real_estate.portal_lease_details', values)
+
+        
